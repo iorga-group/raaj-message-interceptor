@@ -1,0 +1,20 @@
+{
+  "name": "raaj-message-interceptor",
+  "version": "1.2.0",
+  "homepage": "https://github.com/iorga-group/raaj-message-interceptor",
+  "authors": [
+    "iORGA GROUP"
+  ],
+  "description": "Restless Architecture for AngularJS - Message Interceptor",
+  "main": "./src/raaj-message-interceptor.js",
+  "dependencies": {
+    "angular": "~1.2.15",
+    "raaj-message-service": "~1.2.0"
+  },
+  "keywords": [
+    "raaj",
+    "message",
+    "restless"
+  ],
+  "license": "LGPLv3"
+}

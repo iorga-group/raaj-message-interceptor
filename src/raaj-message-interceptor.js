@@ -18,61 +18,61 @@
     'use strict';
 
     angular.module('raaj-message-interceptor', ['raaj-message-service'])
-        .factory('irajMessageInterceptor', function(irajMessageService) {
+        .factory('raajMessageInterceptor', function(raajMessageService) {
             return {
                 applyFieldMessages: function(response) {
-                    var irajFieldMessages = response.data.irajFieldMessages;
-                    if (irajFieldMessages) {
+                    var raajFieldMessages = response.data.raajFieldMessages;
+                    if (raajFieldMessages) {
                         // there are some field messages to display
-                        for (var i = 0 ; i < irajFieldMessages.length ; i++) {
-                            var irajFieldMessage = irajFieldMessages[i];
-                            var id = irajFieldMessage.id;
+                        for (var i = 0 ; i < raajFieldMessages.length ; i++) {
+                            var raajFieldMessage = raajFieldMessages[i];
+                            var id = raajFieldMessage.id;
                             if (!id) {
                                 // the final id has not been sent, let's recompute it
-                                id = response.config.irajMessagesIdPrefix;
-                                for (var j = 0 ; j < irajFieldMessage.propertyPath.length ; j++) {
+                                id = response.config.raajMessagesIdPrefix;
+                                for (var j = 0 ; j < raajFieldMessage.propertyPath.length ; j++) {
                                     if (id) {
                                         id += '-';
                                     }
-                                    id += irajFieldMessage.propertyPath[j];
+                                    id += raajFieldMessage.propertyPath[j];
                                 }
                             }
-                            irajMessageService.displayFieldMessage({
-                                message: irajFieldMessage.message,
-                                type: irajFieldMessage.type,
+                            raajMessageService.displayFieldMessage({
+                                message: raajFieldMessage.message,
+                                type: raajFieldMessage.type,
                                 id: id
-                            }, response.config.irajMessagesIdPrefix);
+                            }, response.config.raajMessagesIdPrefix);
                         }
                     }
-                    var irajMessages = response.data.irajMessages;
-                    if (irajMessages) {
+                    var raajMessages = response.data.raajMessages;
+                    if (raajMessages) {
                         // there are some form messages to display
-                        irajMessageService.displayMessages(irajMessages, response.config.irajMessagesIdPrefix);
+                        raajMessageService.displayMessages(raajMessages, response.config.raajMessagesIdPrefix);
                     }
-                    return irajFieldMessages || irajMessages;
+                    return raajFieldMessages || raajMessages;
                 }
             }
         })
         .config(function ($httpProvider) {
-            $httpProvider.interceptors.push(function($q, irajMessageService, irajMessageInterceptor) {
+            $httpProvider.interceptors.push(function($q, raajMessageService, raajMessageInterceptor) {
                 return {
                     'response': function(response) {
-                        irajMessageInterceptor.applyFieldMessages(response);
+                        raajMessageInterceptor.applyFieldMessages(response);
                         return response;
                     },
                     'responseError': function(rejection) {
-                        if (!irajMessageInterceptor.applyFieldMessages(rejection)) {
+                        if (!raajMessageInterceptor.applyFieldMessages(rejection)) {
                             // no message found in the request, it's a more global problem, let's display it
-                            irajMessageService.displayMessage({message: rejection.status+' : '+rejection.data, type: 'error'});
+                            raajMessageService.displayMessage({message: rejection.status+' : '+rejection.data, type: 'error'});
                         }
                         return $q.reject(rejection);
                     },
                     'request': function(config) {
-                        if (config.irajClearFieldMessages) {
-                            irajMessageService.clearFieldMessages(config.irajMessagesIdPrefix);
+                        if (config.raajClearFieldMessages) {
+                            raajMessageService.clearFieldMessages(config.raajMessagesIdPrefix);
                         }
-                        if (config.irajClearAllMessages) {
-                            irajMessageService.clearAllMessages(config.irajMessagesIdPrefix);
+                        if (config.raajClearAllMessages) {
+                            raajMessageService.clearAllMessages(config.raajMessagesIdPrefix);
                         }
                         return config;
                     }

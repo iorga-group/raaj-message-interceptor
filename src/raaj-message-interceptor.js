@@ -53,31 +53,32 @@
                 }
             }
         })
-        .config(function ($httpProvider) {
-            $httpProvider.interceptors.push(function($q, raajMessageService, raajMessageInterceptor) {
-                return {
-                    'response': function(response) {
-                        raajMessageInterceptor.applyFieldMessages(response);
-                        return response;
-                    },
-                    'responseError': function(rejection) {
-                        if (!raajMessageInterceptor.applyFieldMessages(rejection)) {
-                            // no message found in the request, it's a more global problem, let's display it
-                            raajMessageService.displayMessage({message: rejection.status+' : '+rejection.data, type: 'error'});
-                        }
-                        return $q.reject(rejection);
-                    },
-                    'request': function(config) {
-                        if (config.raajClearFieldMessages) {
-                            raajMessageService.clearFieldMessages(config.raajMessagesIdPrefix);
-                        }
-                        if (config.raajClearAllMessages) {
-                            raajMessageService.clearAllMessages(config.raajMessagesIdPrefix);
-                        }
-                        return config;
+        .factory('raajMessageRequestInterceptor', function($q, raajMessageService, raajMessageInterceptor) {
+            return {
+                'response': function(response) {
+                    raajMessageInterceptor.applyFieldMessages(response);
+                    return response;
+                },
+                'responseError': function(rejection) {
+                    if (!raajMessageInterceptor.applyFieldMessages(rejection)) {
+                        // no message found in the request, it's a more global problem, let's display it
+                        raajMessageService.displayMessage({message: rejection.status+' : '+rejection.data, type: 'error'});
                     }
+                    return $q.reject(rejection);
+                },
+                'request': function(config) {
+                    if (config.raajClearFieldMessages) {
+                        raajMessageService.clearFieldMessages(config.raajMessagesIdPrefix);
+                    }
+                    if (config.raajClearAllMessages) {
+                        raajMessageService.clearAllMessages(config.raajMessagesIdPrefix);
+                    }
+                    return config;
                 }
-            })
+            };
+        })
+        .config(function ($httpProvider) {
+            $httpProvider.interceptors.push('raajMessageRequestInterceptor');
         })
     ;
 })();
